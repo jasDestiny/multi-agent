@@ -11,6 +11,7 @@ services:
       POSTGRES_DB: agent_data
     volumes:
       - pgdata:/var/lib/postgresql/data
+      - ./initdb:/docker-entrypoint-initdb.d
     ports:
       - "127.0.0.1:5432:5432"
 
@@ -22,8 +23,11 @@ services:
       - db
     env_file:
       - .env
+    environment:
+      DATABASE_URL: postgresql://agent_user:hackathon_secure_password@db:5432/agent_data
     volumes:
       - .:/app
+    command: sh -c "python main.py && cron -f"
 
 volumes:
   pgdata:
